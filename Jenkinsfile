@@ -13,26 +13,22 @@ pipeline {
     stages {
         stage("Build") {
             steps {
-                git branch: 'main', url: 'https://github.com/Damirbek1997/test-task1'
+                git branch: 'main', url: 'https://github.com/Damirbek1997/jenkins-test-task'
                 sh "mvn clean install"
             }
         }
         stage('Run SonarQube') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    sh 'mvn clean package sonar:sonar'
+                    sh 'mvn clean package sonar:sonar -Dsonar.config.path=sonar-project.properties'
                 }
             }
         }
         stage('Deploy') {
             steps {
-                deploy adapters: [
-                                    [
-                                        containerId: 'tomcat',
-                                        contextPath: '',
-                                        war: '**/*.war'
-                                    ]
-                                ]
+                script {
+                    deploy adapters: [tomcat9(credentialsId: 'admin', path: '', url: 'http://localhost:8081')], contextPath: null, war: '**/*.war'
+                }
             }
         }
     }
