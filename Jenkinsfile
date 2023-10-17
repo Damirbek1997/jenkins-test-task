@@ -27,6 +27,13 @@ pipeline {
         stage('Deploy') {
             steps {
                 deploy contextPath: null, war: '**/*.war'
+                deploy adapters: [
+                                    [
+                                        containerId: 'tomcat',
+                                        contextPath: '',
+                                        war: '**/*.war'
+                                    ]
+                                ]
             }
         }
     }
